@@ -5,14 +5,16 @@ MAX_LEN = 256  # tamaño máximo de nombre, ruta, etc.
 REGISTER_CODES = {
     0: "REGISTER OK",
     1: "USERNAME IN USE",
-    2: "REGISTER FAIL"
+    2: "REGISTER FAIL",
 }
+REGISTER_DEFAULT_ERROR_VALUE = REGISTER_CODES.get(2)
 
 UNREGISTER_CODES = {
     0: "UNREGISTER OK",
     1: "USER DOES NOT EXIST",
     2: "UNREGISTER FAIL"
 }
+UNREGISTER_DEFAULT_ERROR_VALUE = UNREGISTER_CODES.get(2)
 
 def send_str(sock: socket.socket, txt: str) -> None:
     # data es un objeto bytes que codifica los carácteres del string según utf-8
