@@ -11,8 +11,11 @@ REGISTER_CODES = {
 def send_str(sock: socket.socket, txt: str) -> None:
     # data es un objeto bytes que codifica los carácteres del string según utf-8
     data = txt.encode('utf-8')
-    if len(data) > MAX_LEN:
-        raise ValueError(f'Campo supera {MAX_LEN} bytes: {txt!r}')
+    # review: no enviar string si está vacío?
+    if len(data) == 0:
+        raise ValueError("El campo está vacío")
+    elif len(data) > MAX_LEN:
+        raise ValueError(f'El campo supera {MAX_LEN} bytes: {txt!r}')
     # crea un objeto bytes con los bytes de ambos
     sock.sendall(data + b'\0')
 
@@ -40,7 +43,7 @@ def recv_byte(sock: socket.socket) -> int:
     # acceder a un elemento del objeto bytes devuelve el valor entero de ese byte
     return b[0]
 
-def register(server: str, port: int, user: str) -> str:
+def register(server: str, port: int, user: str) -> int:
     try:
         # with asegura cerrar el socket después de salir de él
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -49,11 +52,9 @@ def register(server: str, port: int, user: str) -> str:
             sock.connect((server, port))
             send_str(sock, "REGISTER")
             send_str(sock, user)
-            code = recv_byte(sock)
-            # si el servidor devuelve cualquier cosa distinta a 0, 1 o 2, devolvemos REGISTER FAIL 
-            msg  = REGISTER_CODES.get(code, f'REGISTER FAIL')
-            return msg
-    # si hay cualquier tipo de error en el cliente, también se devuelve REGISTER FAIL
-    except (socket.error, ValueError, ConnectionError) as e:
-        return "REGISTER FAIL"
+            return recv_byte(sock)
+            
+    # si hay cualquier tipo de error en el cliente, también se devuelve 2 (REGISTER FAIL)
+    except (socket.error, ValueError, ConnectionError, OSError, TimeoutError, UnicodeError) as e:
+        return int
 

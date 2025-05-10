@@ -13,18 +13,26 @@ class client :
         ERROR = 1
         USER_ERROR = 2
 
+    # clase que contiene los posibles valores de la máquina de estados del cliente
+    class State(Enum):
+        UNREGISTERED = 0
+        REGISTERED   = 1
+        CONNECTED    = 2
+
+    _state = State.UNREGISTERED
+
     # ****************** ATTRIBUTES ******************
     _server = None
     _port = -1
 
     # ******************** METHODS *******************
 
-
     @staticmethod
     def  register(user) :        
-        # Call the register function from the protocol module
-        msg = protocol.register(client._server, client._port, user)
-        print(msg)
+        code = protocol.register(client._server, client._port, user)
+        print(protocol.REGISTER_CODES.get(code, "REGISTER FAIL"))
+        if code == 0:
+            client._state = client.State.REGISTERED
    
     @staticmethod
     def  unregister(user) :
