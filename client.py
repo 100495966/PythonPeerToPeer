@@ -28,26 +28,24 @@ class client :
     # ******************** METHODS *******************
 
     @staticmethod
-    def  register(user) :      
-        if (client._state == client.State.UNREGISTERED) and (user is not None) and (type(user) is str) and (0 < len(user) <= protocol.MAX_LEN):  
-            list_str = ["REGISTER", user]
-            code = protocol.communicate_with_server(client._server, client._port, list_str, default_error_value)
-            print(protocol.REGISTER_CODES.get(code, "REGISTER FAIL"))
-            if code == 0:
+    def  register(user) :
+        if (client._state == client.State.UNREGISTERED) and (user is not None) and (type(user) is str) and (0 < len(user.encode("utf-8")) <= protocol.MAX_LEN):  
+            msg = protocol.register(client._server, client._port, user)
+            print(msg)
+            if msg == "REGISTER OK":
                 client._state = client.State.REGISTERED
         else:
-            print(protocol.REGISTER_DEFAULT_ERROR_VALUE)
+            print("REGISTER FAIL")
    
     @staticmethod
     def  unregister(user) :
-        if (client._state != client.State.UNREGISTERED) and (user is not None) and (type(user) is str) and (0 < len(user) <= protocol.MAX_LEN):  
-            list_str = ["UNREGISTER", user]
-            code = protocol.communicate_with_server(client._server, client._port, list_str, default_error_value)
-            print(protocol.UNREGISTER_CODES.get(code, "UNREGISTER FAIL"))
-            if code == 0:
+        if (client._state != client.State.UNREGISTERED) and (user is not None) and (type(user) is str) and (0 < len(user.encode("utf-8")) <= protocol.MAX_LEN):  
+            msg = protocol.unregister(client._server, client._port, user)
+            print(msg)
+            if msg == "UNREGISTER OK":
                 client._state = client.State.UNREGISTERED
         else:
-            print(protocol.UNREGISTER_DEFAULT_ERROR_VALUE)
+            print("UNREGISTER FAIL")
 
     
     @staticmethod

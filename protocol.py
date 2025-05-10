@@ -7,14 +7,12 @@ REGISTER_CODES = {
     1: "USERNAME IN USE",
     2: "REGISTER FAIL",
 }
-REGISTER_DEFAULT_ERROR_VALUE = REGISTER_CODES.get(2)
 
 UNREGISTER_CODES = {
     0: "UNREGISTER OK",
     1: "USER DOES NOT EXIST",
     2: "UNREGISTER FAIL"
 }
-UNREGISTER_DEFAULT_ERROR_VALUE = UNREGISTER_CODES.get(2)
 
 def send_str(sock: socket.socket, txt: str) -> None:
     # data es un objeto bytes que codifica los carácteres del string según utf-8
@@ -67,5 +65,13 @@ def communicate_with_server(server: str, port: int, list_str: list, default_erro
     # si hay cualquier tipo de error en el cliente, se devuelve el valor predeterminado de error
     except (socket.error, ValueError, ConnectionError, OSError, TimeoutError, UnicodeError) as e:
         return default_error_value
+    
+def register(server: str, port: int, user: str) -> int:
+    # el valor de error por defecto es 2, que corresponde a "REGISTER FAIL"
+    code = communicate_with_server(server, port, ["REGISTER", user], 2)
+    return REGISTER_CODES.get(code, "REGISTER FAIL")
 
-
+def unregister(server: str, port: int, user: str) -> int:
+    # el valor de error por defecto es 2, que corresponde a "UNREGISTER FAIL"
+    code = communicate_with_server(server, port, ["UNREGISTER", user], 2)
+    return UNREGISTER_CODES.get(code, "UNREGISTER FAIL")
