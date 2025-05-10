@@ -2,16 +2,21 @@ import socket
 
 MAX_LEN = 256  # tamaño máximo de nombre, ruta, etc.
 
-REGISTER_CODES = {
-    0: "REGISTER OK",
-    1: "USERNAME IN USE",
-    2: "REGISTER FAIL",
-}
 
-UNREGISTER_CODES = {
-    0: "UNREGISTER OK",
-    1: "USER DOES NOT EXIST",
-    2: "UNREGISTER FAIL"
+# Configuración para operaciones
+SETTINGS = {
+    'register': {
+        0: "REGISTER OK",
+        1: "USERNAME IN USE",
+        2: "REGISTER FAIL",
+        'default': 2
+    },
+    'unregister': {
+        0: "UNREGISTER OK",
+        1: "USER DOES NOT EXIST",
+        2: "UNREGISTER FAIL",
+        'default': 2
+    }
 }
 
 def send_str(sock: socket.socket, txt: str) -> None:
@@ -67,11 +72,13 @@ def communicate_with_server(server: str, port: int, list_str: list, default_erro
         return default_error_value
     
 def register(server: str, port: int, user: str) -> int:
-    # el valor de error por defecto es 2, que corresponde a "REGISTER FAIL"
-    code = communicate_with_server(server, port, ["REGISTER", user], 2)
-    return REGISTER_CODES.get(code, "REGISTER FAIL")
+    settings = SETTINGS['register']
+    code = communicate_with_server(server, port, ["REGISTER", user], settings['default'])
+    return settings.get(code, settings[settings['default']])
 
 def unregister(server: str, port: int, user: str) -> int:
-    # el valor de error por defecto es 2, que corresponde a "UNREGISTER FAIL"
-    code = communicate_with_server(server, port, ["UNREGISTER", user], 2)
-    return UNREGISTER_CODES.get(code, "UNREGISTER FAIL")
+    settings = SETTINGS['unregister']
+    code = communicate_with_server(server, port, ["UNREGISTER", user], settings['default'])
+    return settings.get(code, settings[settings['default']])
+
+    

@@ -35,7 +35,8 @@ class client :
             if msg == "REGISTER OK":
                 client._state = client.State.REGISTERED
         else:
-            print("REGISTER FAIL")
+            settings = protocol.SETTINGS['register']
+            print(settings[settings['default']])
    
     @staticmethod
     def  unregister(user) :
@@ -45,7 +46,9 @@ class client :
             if msg == "UNREGISTER OK":
                 client._state = client.State.UNREGISTERED
         else:
-            print("UNREGISTER FAIL")
+            settings = protocol.SETTINGS['unregister']
+            print(settings[settings['default']])
+   
 
     
     @staticmethod
